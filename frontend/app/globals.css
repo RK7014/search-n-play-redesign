@@ -1,0 +1,194 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens. Tailwind v4 reads custom properties declared inside
+ * @theme and turns them into utilities automatically (e.g. --color-ink
+ * becomes bg-ink / text-ink / border-ink).
+ *
+ * The values below are the DARK theme (the site's default). Light theme
+ * overrides live in the `[data-theme="light"]` block further down, which
+ * simply redefines the same custom properties — every `bg-ink`, `text-paper`,
+ * `text-slate-400` etc. utility automatically repaints when the attribute
+ * changes, with no per-component light/dark branching required. See
+ * components/theme/ThemeProvider.tsx for how `data-theme` gets set.
+ */
+@theme {
+  --color-paper: #fafaf8;
+  --color-ink: #0a0c10;
+  --color-ink-soft: #14161d;
+
+  /* Primary accent: a confident cobalt, used for CTAs, links, and focus.
+     Kept the same across both themes — brand/accent colors don't need to
+     shift the way neutral surface colors do. */
+  --color-accent-50: #eef1ff;
+  --color-accent-100: #dde3ff;
+  --color-accent-400: #5b76ff;
+  --color-accent-500: #3355ff;
+  --color-accent-600: #1f3fe0;
+  --color-accent-700: #1830ad;
+
+  /* Secondary accent: warm amber, used sparingly for highlights/badges. */
+  --color-warm-100: #fff2d9;
+  --color-warm-500: #f5a524;
+  --color-warm-600: #d9860a;
+
+  --color-success-500: #16a34a;
+  --color-success-100: #dcfce7;
+  --color-danger-500: #dc2626;
+  --color-danger-100: #fee2e2;
+
+  /* Neutral text scale. Numbered by *role* (300/400 = primary secondary
+     text, 500 = more muted, ...) rather than literal lightness, since the
+     light theme below reverses the ramp — slate-400 stays "the standard
+     muted-text gray" in both themes, just at a different literal value. */
+  --color-slate-50: #f8f9fb;
+  --color-slate-100: #eef0f4;
+  --color-slate-200: #dde1e8;
+  --color-slate-300: #c3c9d4;
+  --color-slate-400: #9aa2b2;
+  --color-slate-500: #707a8c;
+  --color-slate-600: #545d6e;
+  --color-slate-700: #3c4453;
+  --color-slate-800: #262c38;
+  --color-slate-900: #171b24;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-sora), var(--font-inter), ui-sans-serif, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+
+  --radius-sm: 0.5rem;
+  --radius-md: 0.875rem;
+  --radius-lg: 1.25rem;
+  --radius-xl: 1.75rem;
+
+  --container-max: 78rem;
+
+  --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Translucent "glass" surfaces and borders used throughout the site (cards,
+   pills, inputs, dividers). Plain CSS custom properties rather than @theme
+   entries, since these are consumed via Tailwind's arbitrary-value syntax
+   (bg-[var(--surface-2)]) rather than generating their own utility names.
+   Dark values here match what was previously hardcoded as bg-white/NN. */
+:root {
+  --surface-1: rgb(255 255 255 / 3%);
+  --surface-2: rgb(255 255 255 / 4%);
+  --surface-3: rgb(255 255 255 / 5%);
+  --surface-4: rgb(255 255 255 / 6%);
+  --surface-5: rgb(255 255 255 / 10%);
+  --surface-6: rgb(255 255 255 / 15%);
+  --surface-7: rgb(255 255 255 / 20%);
+
+  --border-1: rgb(255 255 255 / 10%);
+  --border-2: rgb(255 255 255 / 15%);
+  --border-3: rgb(255 255 255 / 20%);
+  --border-4: rgb(255 255 255 / 30%);
+  --border-5: rgb(255 255 255 / 40%);
+  --border-6: rgb(255 255 255 / 50%);
+}
+
+[data-theme="light"] {
+  --color-paper: #0a0c10;
+  --color-ink: #fafaf8;
+  --color-ink-soft: #f0efe9;
+
+  /* The text-scale ramp is reversed (50 <-> 900, 100 <-> 800, ...) so a
+     given step keeps the same *role* on a light background instead of
+     becoming illegibly pale. */
+  --color-slate-50: #171b24;
+  --color-slate-100: #262c38;
+  --color-slate-200: #3c4453;
+  --color-slate-300: #545d6e;
+  --color-slate-400: #707a8c;
+  --color-slate-500: #9aa2b2;
+  --color-slate-600: #c3c9d4;
+  --color-slate-700: #dde1e8;
+  --color-slate-800: #eef0f4;
+  --color-slate-900: #f8f9fb;
+
+  --surface-1: rgb(10 12 16 / 3%);
+  --surface-2: rgb(10 12 16 / 4%);
+  --surface-3: rgb(10 12 16 / 5%);
+  --surface-4: rgb(10 12 16 / 7%);
+  --surface-5: rgb(10 12 16 / 8%);
+  --surface-6: rgb(10 12 16 / 10%);
+  --surface-7: rgb(10 12 16 / 14%);
+
+  --border-1: rgb(10 12 16 / 10%);
+  --border-2: rgb(10 12 16 / 15%);
+  --border-3: rgb(10 12 16 / 20%);
+  --border-4: rgb(10 12 16 / 28%);
+  --border-5: rgb(10 12 16 / 36%);
+  --border-6: rgb(10 12 16 / 45%);
+}
+
+html {
+  scroll-behavior: smooth;
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+}
+
+/* The site is dark-themed by default, with an opt-in light theme toggled
+   via data-theme (see components/theme/ThemeProvider.tsx). */
+body {
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-accent-500);
+  color: white;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent-500);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Respect the OS-level reduced-motion preference everywhere, including
+   inside Framer Motion components (which read this via useReducedMotion,
+   but this CSS-level fallback covers plain CSS transitions/animations too). */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.container-page {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .container-page {
+    padding-inline: 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-page {
+    padding-inline: 2.5rem;
+  }
+}
+
+.text-balance {
+  text-wrap: balance;
+}
